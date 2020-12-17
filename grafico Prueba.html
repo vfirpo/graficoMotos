@@ -1,0 +1,100 @@
+<html>
+<head>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+  <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
+  <style type="text/css">
+
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  
+</style>
+</head>
+<body id="main" onload="createGraph(canvasContainer)" onresize="createGraph(canvasContainer)"  >
+
+  <canvas id="canvasContainer"></canvas>
+
+  
+  <script>
+    var maxValueWidth = 0;
+    var data, maxValue, barHeight, xMargen, yMargen, barSpace, fontSize;
+    var index = 0;
+
+    function createGraph(container) {
+      index = 0;
+      data = getData();
+      var containerHeight = window.innerHeight;
+      var containerWidth = window.innerWidth;
+      var countData = data.length;
+      xMargen = containerWidth * 0.05; 
+      yMargen = containerHeight * 0.05; 
+      barHeight = ((containerHeight - (yMargen *2)) / countData) * 0.9;
+      barSpace = barHeight / 9;
+      maxValue = getMaxValue(data);
+      maxValueWidth = (containerWidth - (xMargen * 2))  * 0.8;
+      fontSize = barHeight / 2;
+
+
+      container.width = containerWidth;
+      container.height = containerHeight;
+      
+      var c = document.getElementById("canvasContainer");
+      var ctx = c.getContext("2d");
+      drawBar(xMargen, yMargen, ctx);
+    };
+
+    function getData()
+    {
+      var rtrn = [
+        ['Javier', 60],
+        ['Mauro', 73],
+        ['Joaquin', 55],
+        ['Juan', 30],
+        ['Agencia', 42],
+        ['Alejandro', 65]
+       ];
+      return rtrn;
+    }
+
+    function getMaxValue(param)
+    {
+        var max = 0;
+        var i;
+        for (i = 0; i < param.length; i++) {
+          if (max < param[i][1]){
+            max =  param[i][1];
+          }
+        }
+        return max;
+    }
+
+    function drawBar (x, y, camvasctx ){
+      var widthBar = getWidthBar(data[index][1], maxValueWidth, maxValue );
+      camvasctx.beginPath();
+      camvasctx.rect(x, y, widthBar, barHeight);
+      camvasctx.stroke();
+      camvasctx.font = fontSize + "px Arial";
+      camvasctx.fillText(data[index][0], x + (xMargen * 0.3), y + (barHeight /2) + ((fontSize /2) * 0.8));
+      if ((data.length - 1) > index)
+      {
+        index++;
+        drawBar(x, (y + barHeight + barSpace), camvasctx)
+      }
+    }
+
+    function getWidthBar(val, referencia, valReferencia){
+        return (val * referencia)/ valReferencia; 
+    }
+
+</script>
+</body>
+</html>
+                
